@@ -1,7 +1,12 @@
 #include <Keyboard.h>
+#include <Wire.h>
 
 #define SIZE_OF_ARRAY(x) sizeof(x)/sizeof(x[0])
 
+#define KEY_DOWN 0x01
+#define KEY_UP 0x02
+#define SPECIAL_DOWN 0x03
+#define SPECIAL_UP 0x04
 
 //In ms
 #define TIME_TO_INITIAL_REPEAT 800
@@ -20,7 +25,7 @@ enum buttonDirection
   HOLD
 };
 
-//TODO add function key for the 0 character
+//TODO add function key for the 0 character (possible the function keys??)
 char buttons[ROW_COUNT][COLUMN_COUNT] = 
   {
     {'`', '1', '2', '3', '4', '5', 0 },
@@ -51,23 +56,27 @@ char repeatableSpecial[] =
     KEY_DELETE,
     KEY_TAB,
     KEY_RETURN,
-    KEY_ESC
+    KEY_ESC,
+    KEY_UP_ARROW,
+    KEY_DOWN_ARROW,
+    KEY_LEFT_ARROW,
+    KEY_RIGHT_ARROW,
+    KEY_PAGE_UP,
+    KEY_PAGE_DOWN
   };
 
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
 
 int timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
 
+//If lastX/YPressed is -1, nothing is being held. If -2 then I2C master has button being held
 int lastXPressed = -1;
 int lastYPressed = -1;
+char lastMasterPressed = 0;
 unsigned long timePressed = 0;
 
 bool isRepeatableSpecial(char key)
 {
-  if(key >= 0)
-  {
-    return false;
-  }
   for(int i = 0; i < SIZE_OF_ARRAY(repeatableSpecial); i++)
   {
     if(repeatableSpecial[i] == key)
@@ -144,8 +153,79 @@ buttonDirection isButtonPressed(int x, int y)
   return HOLD;
 }
 
+void masterSendingData(int numberOfBytes)
+{
+  int readNumber = 0;
+  bool isSpecial = false;
+  bool isKeyUp = false;
+  while(Wire.available())
+  {
+    byte b = Wire.read();
+    //Commands come in pairs, first is type, second is key
+    if(readNumber % 2 == 0)
+    {
+      switch(b)
+      {
+        case KEY_DOWN:
+          isSpecial = false;
+          isKeyUp = false;
+          break;
+        case KEY_UP:
+          isSpecial = false;
+          isKeyUp = true;
+          break;
+        case SPECIAL_DOWN:
+          isSpecial = true;
+          isKeyUp = false;
+          break;
+        case SPECIAL_UP:
+          isSpecial = true;
+          isKeyUp = true;
+          break;
+      }
+    }
+    else
+    {
+      if(isKeyUp)
+      {
+        if(isSpecial && !isRepeatableSpecial(b))
+        {
+          Serial.println("Special release!");
+          Keyboard.release(b);
+        }
+        else if(lastXPressed == -2 && lastYPressed == -2 && b == lastMasterPressed)
+        {
+          lastXPressed = -1;
+          lastYPressed = -1;
+        }
+      }
+      else
+      {
+        if(isSpecial && !isRepeatableSpecial(lastMasterPressed))
+        {
+          Serial.println("Special press!");
+          Keyboard.press(b);
+        }
+        else
+        {
+          lastMasterPressed = b;
+          lastXPressed = -2;
+          lastYPressed = -2;
+          Keyboard.write(b);
+          timePressed = millis();
+          timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
+        }
+      }
+    }
+    readNumber += 1;
+  }
+}
+
 void setup()
 {
+  Serial.begin(9600);
+  Wire.begin(1);
+  Wire.onReceive(masterSendingData);
   for(int i = 0; i < COLUMN_COUNT; i++)
   {
     pinMode(columnPins[i], OUTPUT);
@@ -208,5 +288,15 @@ void loop()
       }
     }
     digitalWrite(columnPins[y], LOW);
+  }
+
+  if(lastXPressed == -2 && lastYPressed == -2)
+  {
+    if(millis() - timePressed > timeToRepeatPress)
+    {
+      timePressed = millis();
+      timeToRepeatPress = TIME_TO_SEQUENTIAL_REPEAT;
+      Keyboard.write(lastMasterPressed);
+    }
   }
 }
