@@ -72,7 +72,7 @@ int timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
 //If lastX/YPressed is -1, nothing is being held. If -2 then I2C master has button being held
 int lastXPressed = -1;
 int lastYPressed = -1;
-char lastMasterPressed = 0;
+byte lastMasterPressed = 0;
 unsigned long timePressed = 0;
 
 bool isRepeatableSpecial(char key)
@@ -190,7 +190,6 @@ void masterSendingData(int numberOfBytes)
       {
         if(isSpecial && !isRepeatableSpecial(b))
         {
-          Serial.println("Special release!");
           Keyboard.release(b);
         }
         else if(lastXPressed == -2 && lastYPressed == -2 && b == lastMasterPressed)
@@ -201,9 +200,8 @@ void masterSendingData(int numberOfBytes)
       }
       else
       {
-        if(isSpecial && !isRepeatableSpecial(lastMasterPressed))
+        if(isSpecial && !isRepeatableSpecial(b))
         {
-          Serial.println("Special press!");
           Keyboard.press(b);
         }
         else
@@ -223,7 +221,6 @@ void masterSendingData(int numberOfBytes)
 
 void setup()
 {
-  Serial.begin(9600);
   Wire.begin(1);
   Wire.onReceive(masterSendingData);
   for(int i = 0; i < COLUMN_COUNT; i++)
