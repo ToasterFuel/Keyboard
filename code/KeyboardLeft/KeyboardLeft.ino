@@ -8,10 +8,6 @@
 #define SPECIAL_DOWN 0x03
 #define SPECIAL_UP 0x04
 
-//In ms
-#define TIME_TO_INITIAL_REPEAT 800
-#define TIME_TO_SEQUENTIAL_REPEAT 25
-
 #define COLUMN_COUNT 7
 int columnPins[COLUMN_COUNT] = {20, 19, 18, 15, 14, 16, 10};
 
@@ -20,9 +16,10 @@ int rowPins[ROW_COUNT] = {8, 9, 7, 6, 4};
 
 enum buttonDirection
 {
+  FIRST_DOWN,
+  FIRST_UP,
   DOWN,
-  UP,
-  HOLD
+  UP
 };
 
 //TODO add function key for the 0 character (possible the function keys??)
@@ -50,42 +47,7 @@ char specialKeys[] =
     KEY_RETURN     //-10
   };
 
-char repeatableSpecial[] =
-  {
-    KEY_BACKSPACE,
-    KEY_DELETE,
-    KEY_TAB,
-    KEY_RETURN,
-    KEY_ESC,
-    KEY_UP_ARROW,
-    KEY_DOWN_ARROW,
-    KEY_LEFT_ARROW,
-    KEY_RIGHT_ARROW,
-    KEY_PAGE_UP,
-    KEY_PAGE_DOWN
-  };
-
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
-
-int timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
-
-//If lastX/YPressed is -1, nothing is being held. If -2 then I2C master has button being held
-int lastXPressed = -1;
-int lastYPressed = -1;
-byte lastMasterPressed = 0;
-unsigned long timePressed = 0;
-
-bool isRepeatableSpecial(char key)
-{
-  for(int i = 0; i < SIZE_OF_ARRAY(repeatableSpecial); i++)
-  {
-    if(repeatableSpecial[i] == key)
-    {
-      return true;
-    }
-  }
-  return false;
-}
 
 char getSpecialKey(char key)
 {
@@ -105,58 +67,27 @@ buttonDirection isButtonPressed(int x, int y)
 {
   if(digitalRead(rowPins[x]) != HIGH)
   {
-    if(lastXPressed == x && lastYPressed == y)
+    if(buttonState[x][y])
     {
-      lastXPressed = -1;
-      lastYPressed = -1;
+      buttonState[x][y] = false;
+      return FIRST_UP;
     }
 
     return UP;
   }
 
-  char key = buttons[x][y];
-  if(key < 0)
-  {
-    key = getSpecialKey(key);
-    if(!isRepeatableSpecial(key))
-    {
-      if(buttonState[x][y])
-      {
-        return HOLD;
-      }
-      return DOWN;
-    }
-  }
-
   if(!buttonState[x][y])
   {
-    lastXPressed = x;
-    lastYPressed = y;
-    timePressed = millis();
-    timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
-    
-    return DOWN;
+    buttonState[x][y] = true;
+    return FIRST_DOWN;
   }
 
-  if(!(lastXPressed == x && lastYPressed == y))
-  {
-    return HOLD;
-  }
-
-  if(millis() - timePressed > timeToRepeatPress)
-  {
-    timePressed = millis();
-    timeToRepeatPress = TIME_TO_SEQUENTIAL_REPEAT;
-    return DOWN;
-  }
-
-  return HOLD;
+  return DOWN;
 }
 
 void masterSendingData(int numberOfBytes)
 {
   int readNumber = 0;
-  bool isSpecial = false;
   bool isKeyUp = false;
   while(Wire.available())
   {
@@ -167,19 +98,15 @@ void masterSendingData(int numberOfBytes)
       switch(b)
       {
         case KEY_DOWN:
-          isSpecial = false;
           isKeyUp = false;
           break;
         case KEY_UP:
-          isSpecial = false;
           isKeyUp = true;
           break;
         case SPECIAL_DOWN:
-          isSpecial = true;
           isKeyUp = false;
           break;
         case SPECIAL_UP:
-          isSpecial = true;
           isKeyUp = true;
           break;
       }
@@ -188,31 +115,11 @@ void masterSendingData(int numberOfBytes)
     {
       if(isKeyUp)
       {
-        if(isSpecial && !isRepeatableSpecial(b))
-        {
-          Keyboard.release(b);
-        }
-        else if(lastXPressed == -2 && lastYPressed == -2 && b == lastMasterPressed)
-        {
-          lastXPressed = -1;
-          lastYPressed = -1;
-        }
+        Keyboard.release(b);
       }
       else
       {
-        if(isSpecial && !isRepeatableSpecial(b))
-        {
-          Keyboard.press(b);
-        }
-        else
-        {
-          lastMasterPressed = b;
-          lastXPressed = -2;
-          lastYPressed = -2;
-          Keyboard.write(b);
-          timePressed = millis();
-          timeToRepeatPress = TIME_TO_INITIAL_REPEAT;
-        }
+        Keyboard.press(b);
       }
     }
     readNumber += 1;
@@ -250,50 +157,17 @@ void loop()
     for(int x = 0; x < ROW_COUNT; x++)
     {
       char key = buttons[x][y];
+      key = getSpecialKey(key);
       buttonDirection dir = isButtonPressed(x, y);
-      if(dir == DOWN)
+      if(dir == FIRST_DOWN)
       {
-        if(key < 0)
-        {
-          key = getSpecialKey(key);
-          if(isRepeatableSpecial(key))
-          {
-            Keyboard.write(key);
-          }
-          else if(!buttonState[x][y])
-          {
-            Keyboard.press(key);
-          }
-        }
-        else
-        {
-          Keyboard.write(key);
-        }
-        buttonState[x][y] = true;
+        Keyboard.press(key);
       }
-      else if(dir == UP)
+      else if(dir == FIRST_UP)
       {
-        if(key < 0)
-        {
-          key = getSpecialKey(key);
-          if(buttonState[x][y] && !isRepeatableSpecial(key))
-          {
-            Keyboard.release(key);
-          }
-        }
-        buttonState[x][y] = false;
+        Keyboard.release(key);
       }
     }
     digitalWrite(columnPins[y], LOW);
-  }
-
-  if(lastXPressed == -2 && lastYPressed == -2)
-  {
-    if(millis() - timePressed > timeToRepeatPress)
-    {
-      timePressed = millis();
-      timeToRepeatPress = TIME_TO_SEQUENTIAL_REPEAT;
-      Keyboard.write(lastMasterPressed);
-    }
   }
 }
