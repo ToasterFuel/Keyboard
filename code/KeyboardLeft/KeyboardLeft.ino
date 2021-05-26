@@ -5,9 +5,8 @@
 
 #define KEY_DOWN 0x01
 #define KEY_UP 0x02
-#define SPECIAL_DOWN 0x03
-#define SPECIAL_UP 0x04
 
+#define RIGHT_COLUMN_COUNT 11
 #define COLUMN_COUNT 7
 int columnPins[COLUMN_COUNT] = {20, 19, 18, 15, 14, 16, 10};
 
@@ -22,8 +21,7 @@ enum buttonDirection
   UP
 };
 
-//TODO add function key for the 0 character (possible the function keys??)
-char buttons[ROW_COUNT][COLUMN_COUNT] = 
+char buttonsLeft[ROW_COUNT][COLUMN_COUNT] = 
   {
     {'`', '1', '2', '3', '4', '5', 0 },
     {-4, 'q', 'w', 'e', 'r', 't', '[' },
@@ -32,19 +30,35 @@ char buttons[ROW_COUNT][COLUMN_COUNT] =
     {-3, '-', '=', -8, -9, ' ', -10 }
   };
 
+
+char buttonsRight[ROW_COUNT][RIGHT_COLUMN_COUNT] = 
+  {
+    {0, '6', '7', '8', '9', '0', 0, 0, '/', '*', '-' },
+    {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', '+' },
+    {-6, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', -10 },
+    {-7, 'n', 'm', ',', '.', '/', -16, '1', '2', '3', '.' },
+    {-10, ' ', -11, -12, -13, -14, -15, 0, 0, 0, '0'}
+  };
+
 char specialKeys[] =
   {
     0x00,
-    KEY_LEFT_SHIFT, //-1
-    KEY_LEFT_ALT,   //-2
-    KEY_LEFT_CTRL,  //-3
-    KEY_TAB,        //-4
-    KEY_ESC,        //-5
-    KEY_BACKSPACE,  //-6
-    KEY_DELETE,     //-7
-    KEY_LEFT_GUI,   //-8
-    KEY_LEFT_ALT,   //-9
-    KEY_RETURN     //-10
+    KEY_LEFT_SHIFT,  //-1
+    KEY_LEFT_ALT,    //-2
+    KEY_LEFT_CTRL,   //-3
+    KEY_TAB,         //-4
+    KEY_ESC,         //-5
+    KEY_BACKSPACE,   //-6
+    KEY_DELETE,      //-7
+    KEY_LEFT_GUI,    //-8
+    KEY_LEFT_ALT,    //-9
+    KEY_RETURN,      //-10
+    KEY_RIGHT_ALT,   //-11
+    KEY_LEFT_ARROW,  //-12
+    KEY_DOWN_ARROW,  //-13
+    KEY_UP_ARROW,    //-14
+    KEY_RIGHT_ARROW, //-15
+    KEY_RIGHT_SHIFT, //-16
   };
 
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
@@ -103,23 +117,20 @@ void masterSendingData(int numberOfBytes)
         case KEY_UP:
           isKeyUp = true;
           break;
-        case SPECIAL_DOWN:
-          isKeyUp = false;
-          break;
-        case SPECIAL_UP:
-          isKeyUp = true;
-          break;
       }
     }
     else
     {
+      int x = (0xF0 & b) >> 4;
+      int y = (0x0F & b);
+      char key = getSpecialKey(buttonsRight[x][y]);
       if(isKeyUp)
       {
-        Keyboard.release(b);
+        Keyboard.release(key);
       }
       else
       {
-        Keyboard.press(b);
+        Keyboard.press(key);
       }
     }
     readNumber += 1;
@@ -156,7 +167,7 @@ void loop()
     digitalWrite(columnPins[y], HIGH);
     for(int x = 0; x < ROW_COUNT; x++)
     {
-      char key = buttons[x][y];
+      char key = buttonsLeft[x][y];
       key = getSpecialKey(key);
       buttonDirection dir = isButtonPressed(x, y);
       if(dir == FIRST_DOWN)
