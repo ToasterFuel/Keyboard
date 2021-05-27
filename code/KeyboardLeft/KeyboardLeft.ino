@@ -27,7 +27,7 @@ char buttonsLeft[ROW_COUNT][COLUMN_COUNT] =
     {KEY_TAB, 'q', 'w', 'e', 'r', 't', '[' },
     {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_BACKSPACE },
     {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_DELETE },
-    {KEY_LEFT_CTRL, '-', '=', -8, KEY_LEFT_ALT, ' ', KEY_RETURN }
+    {KEY_LEFT_CTRL, '-', '=', KEY_LEFT_GUI, KEY_LEFT_ALT, ' ', KEY_RETURN }
   };
 
 
@@ -40,45 +40,7 @@ char buttonsRight[ROW_COUNT][RIGHT_COLUMN_COUNT] =
     {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, '0'}
   };
 
-char specialKeys[] =
-  {
-    0x00,
-    KEY_LEFT_SHIFT,  //-1
-    KEY_LEFT_ALT,    //-2
-    KEY_LEFT_CTRL,   //-3
-    KEY_TAB,         //-4
-    KEY_ESC,         //-5
-    KEY_BACKSPACE,   //-6
-    KEY_DELETE,      //-7
-    KEY_LEFT_GUI,    //-8
-    KEY_LEFT_ALT,    //-9
-    KEY_RETURN,      //-10
-    KEY_RIGHT_ALT,   //-11
-    KEY_LEFT_ARROW,  //-12
-    KEY_DOWN_ARROW,  //-13
-    KEY_UP_ARROW,    //-14
-    KEY_RIGHT_ARROW, //-15
-    KEY_RIGHT_SHIFT, //-16
-    KEY_RIGHT_CTRL   //-17
-  };
-
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
-
-/*
-char getSpecialKey(char key)
-{
-  if(key >= 0)
-  {
-    return key;
-  }
-  int index = -1 * key;
-  if(index >= SIZE_OF_ARRAY(specialKeys))
-  {
-    return 0;
-  }
-  return specialKeys[index];
-}
-*/
 
 buttonDirection isButtonPressed(int x, int y)
 {
