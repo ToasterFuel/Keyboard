@@ -24,20 +24,20 @@ enum buttonDirection
 char buttonsLeft[ROW_COUNT][COLUMN_COUNT] = 
   {
     {'`', '1', '2', '3', '4', '5', 0 },
-    {-4, 'q', 'w', 'e', 'r', 't', '[' },
-    {-5, 'a', 's', 'd', 'f', 'g', -6 },
-    {-1, 'z', 'x', 'c', 'v', 'b', -7 },
-    {-3, '-', '=', -8, -9, ' ', -10 }
+    {KEY_TAB, 'q', 'w', 'e', 'r', 't', '[' },
+    {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_BACKSPACE },
+    {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_DELETE },
+    {KEY_LEFT_CTRL, '-', '=', -8, KEY_LEFT_ALT, ' ', KEY_RETURN }
   };
 
 
 char buttonsRight[ROW_COUNT][RIGHT_COLUMN_COUNT] = 
   {
-    {0, '6', '7', '8', '9', '0', 0, 0, '/', '*', '-' },
+    {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, '/', '*', '-' },
     {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', '+' },
-    {-6, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', -10 },
-    {-7, 'n', 'm', ',', '.', '/', -16, '1', '2', '3', '.' },
-    {-10, ' ', -11, -12, -13, -14, -15, 0, 0, 0, '0'}
+    {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', KEY_RETURN },
+    {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, '1', '2', '3', '.' },
+    {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, '0'}
   };
 
 char specialKeys[] =
@@ -59,10 +59,12 @@ char specialKeys[] =
     KEY_UP_ARROW,    //-14
     KEY_RIGHT_ARROW, //-15
     KEY_RIGHT_SHIFT, //-16
+    KEY_RIGHT_CTRL   //-17
   };
 
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
 
+/*
 char getSpecialKey(char key)
 {
   if(key >= 0)
@@ -76,6 +78,7 @@ char getSpecialKey(char key)
   }
   return specialKeys[index];
 }
+*/
 
 buttonDirection isButtonPressed(int x, int y)
 {
@@ -123,7 +126,7 @@ void masterSendingData(int numberOfBytes)
     {
       int x = (0xF0 & b) >> 4;
       int y = (0x0F & b);
-      char key = getSpecialKey(buttonsRight[x][y]);
+      char key = buttonsRight[x][y];
       if(isKeyUp)
       {
         Keyboard.release(key);
@@ -167,9 +170,8 @@ void loop()
     digitalWrite(columnPins[y], HIGH);
     for(int x = 0; x < ROW_COUNT; x++)
     {
-      char key = buttonsLeft[x][y];
-      key = getSpecialKey(key);
       buttonDirection dir = isButtonPressed(x, y);
+      char key = buttonsLeft[x][y];
       if(dir == FIRST_DOWN)
       {
         Keyboard.press(key);
