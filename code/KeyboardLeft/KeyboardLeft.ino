@@ -2,6 +2,7 @@
 #include <Wire.h>
 
 #define SIZE_OF_ARRAY(x) sizeof(x)/sizeof(x[0])
+#define GET_KEY(l, t, x, y) (*buttons[l].t)[x][y]
 
 #define KEY_DOWN 0x01
 #define KEY_UP 0x02
@@ -13,6 +14,12 @@ int columnPins[COLUMN_COUNT] = {20, 19, 18, 15, 14, 16, 10};
 #define ROW_COUNT 5
 int rowPins[ROW_COUNT] = {8, 9, 7, 6, 4};
 
+enum side
+{
+  LEFT,
+  RIGHT
+};
+
 enum buttonDirection
 {
   FIRST_DOWN,
@@ -21,26 +28,113 @@ enum buttonDirection
   UP
 };
 
-char buttonsLeft[ROW_COUNT][COLUMN_COUNT] = 
-  {
-    {'`', '1', '2', '3', '4', '5', 0 },
-    {KEY_TAB, 'q', 'w', 'e', 'r', 't', '[' },
-    {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_BACKSPACE },
-    {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_DELETE },
-    {KEY_LEFT_CTRL, '-', '=', KEY_LEFT_GUI, KEY_LEFT_ALT, ' ', KEY_RETURN }
-  };
+typedef char leftButtons[ROW_COUNT][COLUMN_COUNT];
+typedef char rightButtons[ROW_COUNT][RIGHT_COLUMN_COUNT];
 
+struct layerButtons
+{
+  leftButtons* left;
+  rightButtons* right;
+};
 
-char buttonsRight[ROW_COUNT][RIGHT_COLUMN_COUNT] = 
-  {
-    {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, '/', '*', '-' },
-    {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', '+' },
-    {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', KEY_RETURN },
-    {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, '1', '2', '3', '.' },
-    {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, '0'}
-  };
+struct layerConfig
+{
+  side s;
+  int x;
+  int y;
+  int layerIndex;
+};
+
+leftButtons defaultLeft = 
+{
+  {'`', '1', '2', '3', '4', '5', 0 },
+  {KEY_TAB, 'q', 'w', 'e', 'r', 't', '[' },
+  {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_BACKSPACE },
+  {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_DELETE },
+  {KEY_LEFT_CTRL, '-', '=', KEY_LEFT_GUI, KEY_LEFT_ALT, ' ', KEY_RETURN }
+};
+
+rightButtons defaultRight = 
+{
+  {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, '/', '*', '-' },
+  {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', '+' },
+  {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', KEY_RETURN },
+  {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, '1', '2', '3', '.' },
+  {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, '0'}
+};
+
+leftButtons functionLeft =
+{
+  {0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, 0 },
+  {0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0 }
+};
+
+rightButtons functionRight =
+{
+  {0, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+int activeLayer = 0;
+
+layerButtons buttons[]
+{
+  { &defaultLeft, &defaultRight },
+  { &functionLeft, &functionRight }
+};
+
+layerConfig layerConfigs[]
+{
+  {LEFT, 0, 6, 1}
+};
 
 bool buttonState[ROW_COUNT][COLUMN_COUNT];
+
+int getLayerKey(side s, int x, int y)
+{
+  for(int i = 0; i < SIZE_OF_ARRAY(layerConfigs); i++)
+  {
+    layerConfig current = layerConfigs[i];
+    if(current.y == y && current.x == x && current.s == s)
+    {
+      return current.layerIndex;
+    }
+  }
+  return -1;
+}
+
+char getKey(side s, buttonDirection dir, int x, int y)
+{
+  int layerIndex = getLayerKey(s, x, y);
+  if(layerIndex > 0)
+  {
+    if(dir == FIRST_DOWN)
+    {
+      activeLayer = layerIndex;
+    }
+    else if(dir == FIRST_UP)
+    {
+      activeLayer = 0;
+    }
+  }
+
+  if(s == LEFT)
+  {
+    int key = GET_KEY(activeLayer, left, x, y);
+    if(activeLayer != 0 && key == 0)
+    {
+      key = GET_KEY(0, left, x, y);
+    }
+    return key;
+  }
+  return GET_KEY(activeLayer, right, x, y);
+}
 
 buttonDirection isButtonPressed(int x, int y)
 {
@@ -67,7 +161,7 @@ buttonDirection isButtonPressed(int x, int y)
 void masterSendingData(int numberOfBytes)
 {
   int readNumber = 0;
-  bool isKeyUp = false;
+  buttonDirection dir = UP;
   while(Wire.available())
   {
     byte b = Wire.read();
@@ -77,10 +171,10 @@ void masterSendingData(int numberOfBytes)
       switch(b)
       {
         case KEY_DOWN:
-          isKeyUp = false;
+          dir = FIRST_DOWN;
           break;
         case KEY_UP:
-          isKeyUp = true;
+          dir = FIRST_UP;
           break;
       }
     }
@@ -88,12 +182,12 @@ void masterSendingData(int numberOfBytes)
     {
       int x = (0xF0 & b) >> 4;
       int y = (0x0F & b);
-      char key = buttonsRight[x][y];
-      if(isKeyUp)
+      char key = getKey(RIGHT, dir, x, y);
+      if(dir == FIRST_UP)
       {
         Keyboard.release(key);
       }
-      else
+      else if(dir == FIRST_DOWN)
       {
         Keyboard.press(key);
       }
@@ -133,7 +227,7 @@ void loop()
     for(int x = 0; x < ROW_COUNT; x++)
     {
       buttonDirection dir = isButtonPressed(x, y);
-      char key = buttonsLeft[x][y];
+      char key = getKey(LEFT, dir, x, y);
       if(dir == FIRST_DOWN)
       {
         Keyboard.press(key);
