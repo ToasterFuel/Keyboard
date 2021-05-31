@@ -14,4 +14,12 @@ I also decided to not use the [QMK](https://github.com/qmk/qmk_firmware) keyboar
 
 # Thoughts
 
+I'm actually surprised with how well this turned out. Sanding, painting, and spraying polyurethane is actually a pretty good finish for the keyboard.
+Sparkfun's Pro Micro is very easy to use
+My favorite part of the project was designing the numpad and how it should attach to the right side.
+
 # Improvements
+
+Don't use PLA, I've always liked how wood looks.
+I will sometimes get a double key press out of the keys, I need to figure out if this is a wiring issue, software issue, or me not used to the green switches (and figure out how to fix)
+Tilt, I like my keyboards with a little step in the back
