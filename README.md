@@ -15,7 +15,7 @@ I also decided to not use the [QMK](https://github.com/qmk/qmk_firmware) keyboar
 # Thoughts
 
 I'm actually surprised with how well this turned out. Sanding, painting, and spraying polyurethane is actually a pretty good finish for the keyboard.
-Sparkfun's Pro Micro is very easy to use
+Sparkfun's Pro Micro is very easy to use (Having the pin numbers printed on the board is a huge quality of life improvement)
 My favorite part of the project was designing the numpad and how it should attach to the right side.
 
 # Improvements
