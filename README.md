@@ -11,6 +11,7 @@ I decided to hand solder the keyboard for 2 main reasons. First, since I added t
 I also decided to not use the [QMK](https://github.com/qmk/qmk_firmware) keyboard firmware simply because I write software for a living and writing code for a keyboard seemed like the easiest part of the project. (I know a pretty dumb reason)
 
 # The Build
+Since I wanted a numpad the first step was finding a way to attach a numpad to the Redox design. I ended up finding one on [Thingiverse](https://www.thingiverse.com/thing:3682168) to base the design off of. I ended up opening the file in Blender and ripped it apart so that I only had the holes for the switches. I then played with it some so that it looks like it would attach to the right side of the split. I don't have any progress gif/images but [here are final versions](/Keyboard/Models/NumpadTop.stl) I ended up printing. I also made some small changes to the right side of the Redox design so that the corner would fit a little better. All models printed can be found in the [Models section](https://github.com/ToasterFuel/Keyboard/tree/master/Models) of the repo.
 
 # Thoughts
 
