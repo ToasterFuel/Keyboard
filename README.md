@@ -19,7 +19,9 @@ Next step was to test the wiring and software on a small scale. So I wired up 4 
 
 Before I start soldering I need to push in all the switches. I found out that the spray paint and polyurethane made the slots for the switches to be too small and it was very hard to push them in. I busted out my Dremel and sanded down every single hole. I feel like it would have been easier if I had a file but the Dremel worked. ![](Pictures/BothSwitchesTop.jpg) ![](Pictures/BothSwitchesBottom.jpg)
 
-Now the soldering! Going into this project I've soldered about 3 things, so I'm not good at it. As of writing this, I can proudly say that I didn't get any better with this project :D. The soldering is so simple and quick I didn't really learn anything new. Actually! That's a lie! I learned that you can take a knife and peel off the insulation of the wire so that you can get these cool sections that are exposed to be soldered to the switches.![](Pictures/LeftColumnSoldered.jpg)
+Now the soldering! Going into this project I've soldered about 3 things before, so I'm not good at it. As of writing this, I can proudly say that I didn't get any better with this project :D. The soldering is so simple and quick I didn't really learn anything new. Actually! That's a lie! I learned that you can take a knife and peel off the insulation of the wire so that you can get these cool sections that are exposed to be soldered to the switches.![](Pictures/LeftColumnSoldered.jpg)
+
+I followed the schematic in the original design to solder the rows and columns into this very pretty mess. It gets a bit messier with the Pro Micro attached, but I'm pretty happy with how it looks. I wish I would have remembered to snap a picture of the protoboard before soldering it down so that you could see all the unnecessary pull up resisters I used ![](Pictures/LeftAllSolldered.jpg)![](Pictures/LeftWithMicro.jpg)
 
 # Thoughts
 
