@@ -17,6 +17,10 @@ Once all the models were done being 3d printed, I glued the numpad and right sid
 
 Next step was to test the wiring and software on a small scale. So I wired up 4 spare buttons in a 2x2 matrix like the final keyboard would and scrambled some code together. The only real problem I had here was keeping the GPIO pins a constant HIGH/LOW. If you look real close at the picture below you'll see some resistors in there that aren't in the original schematic (Let's be honest, those hooped wires make it impossible to follow what's going on in the picture). That's because I _REALLY_ wanted the buttons to be active high. I have absolutely no reason other than that. I'm sure I could have used the internal pull up resistors in the Pro Micro to make the logic an active low but oh well. ![](Pictures/ButtonTesting.jpg)
 
+Before I start soldering I need to push in all the switches. I found out that the spray paint and polyurethane made the slots for the switches to be too small and it was very hard to push them in. I busted out my Dremel and sanded down every single hole. I feel like it would have been easier if I had a file but the Dremel worked. ![](Pictures/BothSwitchesTop.jpg) ![](Pictures/BothSwitchesBottom.jpg)
+
+Now the soldering! Going into this project I've soldered about 3 things, so I'm not good at it. As of writing this, I can proudly say that I didn't get any better with this project :D. The soldering is so simple and quick I didn't really learn anything new. Actually! That's a lie! I learned that you can take a knife and peel off the insulation of the wire so that you can get these cool sections that are exposed to be soldered to the switches.![](Pictures/LeftColumnSoldered.jpg)
+
 # Thoughts
 
 I'm actually surprised with how well this turned out. Sanding, painting, and spraying polyurethane is actually a pretty good finish for the keyboard.
