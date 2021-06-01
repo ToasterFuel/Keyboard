@@ -31,14 +31,11 @@ I also printed a [filling for the 3.5mm jack](https://github.com/ToasterFuel/Key
 
 Final product! Please ignore the laser pointer in the picture ![](Pictures/FinishedEverything.jpg)
 
-# Thoughts
-
-I'm actually surprised with how well this turned out. Sanding, painting, and spraying polyurethane is actually a pretty good finish for the keyboard.
-Sparkfun's Pro Micro is very easy to use (Having the pin numbers printed on the board is a huge quality of life improvement)
-My favorite part of the project was designing the numpad and how it should attach to the right side.
-
 # Improvements
+I'm actually very happy with how the keyboard turned out. Sanding, painting, and applying the polyurethane made the keyboard look pretty good by my standards. Sparkfun's Pro Micro is very easy to use. Major props to them for putting the pin numbers on the PCB. It was a huge quality of life improvement that I haven't actually seen on any other micro controllers. However, if I were to make another Redox keyboard in the future here are the things I think I could improve.
 
-Don't use PLA, I've always liked how wood looks.
-I will sometimes get a double key press out of the keys, I need to figure out if this is a wiring issue, software issue, or me not used to the green switches (and figure out how to fix)
-Tilt, I like my keyboards with a little step in the back
+1. Don't print with PLA. PLA is the cheapest material for my printer, but that also means it has the lowest melting point. So low that the plastic can bend and warp if left in direct sunlight. This actually happened with the first spacers I printed and left outside to dry. I've always liked how stained wood looks, maybe I'll find someone with a CNC machine to carve a case out for me?
+2. Print the bottom as a single piece. There's a seam where I glued the spacers and the 3.5mm jack. I'd love if these weren't there. ![](Pictures/LeftBack.jpg)
+3. When I bought keycaps I just bought a full set of 104 caps and just placed them where they fit. This means I have a decent amount of extra caps that if I had taken the time to map out I probably wouldn't have needed to buy.
+4. I get a double key press every once and awhile. I haven't dove into this issue yet so I have no idea if it's a wiring problem or a software problem. It could actually be a finger/switch too since I've noticed the more I use this keyboard the less I'm finding double key input.
+5. Adding a little tilt. I've always liked my keybaords with a little step in the back so I wouldn't mind figuring out the best angle to tilt this keeb.
