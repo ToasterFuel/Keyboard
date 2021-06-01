@@ -21,7 +21,12 @@ Before I start soldering I need to push in all the switches. I found out that th
 
 Now the soldering! Going into this project I've soldered about 3 things before, so I'm not good at it. As of writing this, I can proudly say that I didn't get any better with this project :D. The soldering is so simple and quick I didn't really learn anything new. Actually! That's a lie! I learned that you can take a knife and peel off the insulation of the wire so that you can get these cool sections that are exposed to be soldered to the switches.![](Pictures/LeftColumnSoldered.jpg)
 
-I followed the schematic in the original design to solder the rows and columns into this very pretty mess. It gets a bit messier with the Pro Micro attached, but I'm pretty happy with how it looks. I wish I would have remembered to snap a picture of the protoboard before soldering it down so that you could see all the unnecessary pull up resisters I used ![](Pictures/LeftAllSolldered.jpg)![](Pictures/LeftWithMicro.jpg)
+I followed the schematic in the original design to solder the rows and columns into this very pretty mess. It gets a bit messier with the Pro Micro attached, but I'm pretty happy with how it looks. I wish I would have remembered to snap a picture of the protoboard before soldering it down so that you could see all the unnecessary pull up resisters I used ![](Pictures/LeftAllSoldered.jpg) ![](Pictures/LeftWithMicro.jpg)
+
+Once I got the left side soldered and loaded up with code, I was absolutely shocked that it worked immediately! I was so excited I woke up the sleeping wife to show her! To which she did not share my excitement nor wish to see the keyboard in action :( I like to think that my careful small scale testing helped make it work first try and it wasn't at all the fact that someone else already made the schematic for me. Anyway, soldering the right side was the same process as the left: rows and columns. ![](Pictures/RightAllSoldered.jpg)
+
+As I went to assemble the halfs I hit the only major problem of the project: the original design expected me to use a PCB and the extra resistors/protoboard made it so that the top would not fit to the bottom. I ended up designing, printing, sanding, painting, finishing, and gluing 0.5 cm spacers for each piece so that the top would be set a little bit higher. [Links to](https://github.com/ToasterFuel/Keyboard/blob/readme-draft/Models/LeftKeyboardSpacing.stl) [the](https://github.com/ToasterFuel/Keyboard/blob/readme-draft/Models/RightKeyboardSpacing.stl) [spacings](https://github.com/ToasterFuel/Keyboard/blob/readme-draft/Models/NumpadSpacing.stl)
+
 
 # Thoughts
 
