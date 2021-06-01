@@ -15,6 +15,8 @@ Since I wanted a numpad the first step was finding a way to attach a numpad to t
 
 Once all the models were done being 3d printed, I glued the numpad and right sides together, sanded them down, spray painted them black, and then applied a layer of polyurethane. This was the part I was most surprised by since I'm still new to 3d printing and it was the first time I took the time to properly sand down a model before painting and finishing it. It makes the final product look really good (I know what a surprise!)![](Pictures/FinishedCase.jpg)
 
+Next step was to test the wiring and software on a small scale. So I wired up 4 spare buttons in a 2x2 matrix like the final keyboard would and scrambled some code together. The only real problem I had here was keeping the GPIO pins a constant HIGH/LOW. If you look real close at the picture below you'll see some resistors in there that aren't in the original schematic (Let's be honest, those hooped wires make it impossible to follow what's going on in the picture). That's because I _REALLY_ wanted the buttons to be active high. I have absolutely no reason other than that. I'm sure I could have used the internal pull up resistors in the Pro Micro to make the logic an active low but oh well. ![](Pictures/ButtonTesting.jpg)
+
 # Thoughts
 
 I'm actually surprised with how well this turned out. Sanding, painting, and spraying polyurethane is actually a pretty good finish for the keyboard.
