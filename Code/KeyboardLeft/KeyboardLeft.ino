@@ -1,6 +1,23 @@
 #include <Keyboard.h>
 #include <Wire.h>
 
+#define NUM_SLASH '\334'
+#define NUM_STAR  '\335'
+#define NUM_MINUS '\336'
+#define NUM_PLUS  '\337'
+#define NUM_ENTER '\340'
+#define NUM_1     '\341'
+#define NUM_2     '\342'
+#define NUM_3     '\343'
+#define NUM_4     '\344'
+#define NUM_5     '\345'
+#define NUM_6     '\346'
+#define NUM_7     '\347'
+#define NUM_8     '\350'
+#define NUM_9     '\351'
+#define NUM_0     '\352'
+#define NUM_DOT   '\353'
+
 #define SIZE_OF_ARRAY(x) sizeof(x)/sizeof(x[0])
 #define GET_KEY(l, t, x, y) (*buttons[l].t)[x][y]
 
@@ -56,11 +73,11 @@ leftButtons defaultLeft =
 
 rightButtons defaultRight = 
 {
-  {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, '/', '*', '-' },
-  {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', '+' },
-  {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', '4', '5', '6', KEY_RETURN },
-  {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, '1', '2', '3', '.' },
-  {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, '0'}
+  {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, NUM_SLASH, NUM_STAR, NUM_MINUS },
+  {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', NUM_8, NUM_9, NUM_PLUS },
+  {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', NUM_4, NUM_5, NUM_6, NUM_ENTER },
+  {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, NUM_1, NUM_2, NUM_3, NUM_DOT },
+  {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, NUM_0 }
 };
 
 leftButtons functionLeft =
