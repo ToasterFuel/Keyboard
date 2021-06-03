@@ -74,7 +74,7 @@ leftButtons defaultLeft =
 rightButtons defaultRight = 
 {
   {0, '6', '7', '8', '9', '0', KEY_RIGHT_CTRL, 0, NUM_SLASH, NUM_STAR, NUM_MINUS },
-  {']', 'y', 'u', 'i', 'o', 'p', '\\', '7', NUM_8, NUM_9, NUM_PLUS },
+  {']', 'y', 'u', 'i', 'o', 'p', '\\', NUM_7, NUM_8, NUM_9, NUM_PLUS },
   {KEY_BACKSPACE, 'h', 'j', 'k', 'l', ';', '\'', NUM_4, NUM_5, NUM_6, NUM_ENTER },
   {KEY_DELETE, 'n', 'm', ',', '.', '/', KEY_RIGHT_SHIFT, NUM_1, NUM_2, NUM_3, NUM_DOT },
   {KEY_RETURN, ' ', KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, 0, 0, 0, NUM_0 }
