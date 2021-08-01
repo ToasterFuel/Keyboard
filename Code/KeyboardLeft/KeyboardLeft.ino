@@ -1,6 +1,11 @@
 #include <Keyboard.h>
 #include <Wire.h>
 
+#define MAX_ULONG -1
+#define KEY_UP_TIME 0
+#define KEY_HELD_TIME MAX_ULONG
+#define DEBOUNCE_TIMER 40
+
 #define NUM_SLASH '\334'
 #define NUM_STAR  '\335'
 #define NUM_MINUS '\336'
@@ -111,7 +116,7 @@ layerConfig layerConfigs[]
   {LEFT, 0, 6, 1}
 };
 
-bool buttonState[ROW_COUNT][COLUMN_COUNT];
+unsigned long buttonStateTime[ROW_COUNT][COLUMN_COUNT + RIGHT_COLUMN_COUNT];
 
 int getLayerKey(side s, int x, int y)
 {
@@ -153,26 +158,68 @@ char getKey(side s, buttonDirection dir, int x, int y)
   return GET_KEY(activeLayer, right, x, y);
 }
 
+unsigned long getMillis()
+{
+  unsigned long currentTime = millis();
+  if(currentTime == KEY_HELD_TIME || currentTime == KEY_UP_TIME)
+  {
+    currentTime = 1;
+  }
+  return currentTime;
+}
+
+bool isDebouncedPressed(int x, int y)
+{
+  if(buttonStateTime[x][y] == KEY_HELD_TIME || buttonStateTime[x][y] == KEY_UP_TIME)
+  {
+    return false;
+  }
+
+  unsigned long currentTime = millis();
+  unsigned long pressedTime = buttonStateTime[x][y];
+  unsigned long deltaTime = currentTime - pressedTime;
+  if(pressedTime > currentTime)
+  {
+    deltaTime = MAX_ULONG - pressedTime + currentTime;
+  }
+  if(deltaTime < DEBOUNCE_TIMER)
+  {
+    return false;
+  }
+  buttonStateTime[x][y] = KEY_HELD_TIME;
+  return true;
+}
+
 buttonDirection isButtonPressed(int x, int y)
 {
   if(digitalRead(rowPins[x]) != HIGH)
   {
-    if(buttonState[x][y])
+    if(buttonStateTime[x][y] != KEY_UP_TIME)
     {
-      buttonState[x][y] = false;
+      buttonStateTime[x][y] = KEY_UP_TIME;
       return FIRST_UP;
     }
 
     return UP;
   }
 
-  if(!buttonState[x][y])
+  if(buttonStateTime[x][y] == KEY_HELD_TIME)
   {
-    buttonState[x][y] = true;
-    return FIRST_DOWN;
+    return DOWN;
+  }
+  if(buttonStateTime[x][y] != KEY_UP_TIME)
+  {
+    if(isDebouncedPressed(x, y))
+    {
+      return FIRST_DOWN;
+    }
+  }
+  if(buttonStateTime[x][y] == KEY_UP_TIME)
+  {
+    buttonStateTime[x][y] = getMillis();
   }
 
-  return DOWN;
+  return UP;
 }
 
 void masterSendingData(int numberOfBytes)
@@ -202,11 +249,12 @@ void masterSendingData(int numberOfBytes)
       char key = getKey(RIGHT, dir, x, y);
       if(dir == FIRST_UP)
       {
+        buttonStateTime[x][COLUMN_COUNT + y] = KEY_UP_TIME;
         Keyboard.release(key);
       }
       else if(dir == FIRST_DOWN)
       {
-        Keyboard.press(key);
+        buttonStateTime[x][COLUMN_COUNT + y] = getMillis();
       }
     }
     readNumber += 1;
@@ -229,9 +277,9 @@ void setup()
   }
   for(int x = 0; x < ROW_COUNT; x++)
   {
-    for(int y = 0; y < COLUMN_COUNT; y++)
+    for(int y = 0; y < RIGHT_COLUMN_COUNT; y++)
     {
-      buttonState[x][y] = false;
+      buttonStateTime[x][y] = false;
     }
   }
 }
@@ -255,5 +303,18 @@ void loop()
       }
     }
     digitalWrite(columnPins[y], LOW);
+  }
+  
+  for(int y = COLUMN_COUNT; y < COLUMN_COUNT + RIGHT_COLUMN_COUNT; y++)
+  {
+    for(int x = 0; x < ROW_COUNT; x++)
+    {
+      if(isDebouncedPressed(x, y))
+      {
+        buttonStateTime[x][y] = KEY_HELD_TIME;
+        char key = getKey(RIGHT, FIRST_DOWN, x, y - COLUMN_COUNT);
+        Keyboard.press(key);
+      }
+    }
   }
 }
