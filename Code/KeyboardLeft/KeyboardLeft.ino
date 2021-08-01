@@ -71,8 +71,8 @@ leftButtons defaultLeft =
 {
   {'`', '1', '2', '3', '4', '5', 0 },
   {KEY_TAB, 'q', 'w', 'e', 'r', 't', '[' },
-  {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_BACKSPACE },
-  {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_DELETE },
+  {KEY_ESC, 'a', 's', 'd', 'f', 'g', KEY_PAGE_UP },
+  {KEY_LEFT_SHIFT, 'z', 'x', 'c', 'v', 'b', KEY_PAGE_DOWN },
   {KEY_LEFT_CTRL, '-', '=', KEY_LEFT_GUI, KEY_LEFT_ALT, ' ', KEY_RETURN }
 };
 
